@@ -2,12 +2,14 @@ FROM centos:6.7
 
 MAINTAINER kwangho "kwangho741@gmail.com"
 
+RUN yum install -y epel-release && yum clean all
+RUN yum -y update && yum clean all
+
 # install Nginx
 RUN yum install -y nginx
 
 # install PHP7 with fpm
-RUN wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-RUN rpm -Uvh remi-release-6*.rpm
+RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 RUN yum install -y php php-devel php-fpm php-opcache php-xml php-pecl-ssh2 php-mcrypt php-mbstring php-pdo php-mysqlnd php-pecl-apcu php-pecl-memcache php-pecl-memcached php-pecl-redis --enablerepo=remi-php70
 
 # web root
@@ -17,33 +19,31 @@ RUN rm -rf /etc/nginx/nginx.conf
 RUN rm -rf /etc/nginx/conf.d/default.conf
 RUN rm -rf /etc/php-fpm.d/www.conf
 
-ADD conf/nginx.conf /etc/nginx/nginx.conf
-ADD conf/default.conf /etc/nginx/conf.d/default.conf
-ADD conf/wwww.conf /etc/php-fpm.d/www.conf
+ADD config/nginx.conf /etc/nginx/nginx.conf
+ADD config/default.conf /etc/nginx/conf.d/default.conf
+ADD config/www.conf /etc/php-fpm.d/www.conf
 
-# install Facebook-Scribe
-RUN yum update -y
+# install Facebook-Scribe(thrift)
 RUN yum install -y automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar
 
-# install thrift
 ENV thrift_src /tmp/thrift
 RUN mkdir -p $thrift_src && \
     cd $thrift_src && \
-    wget http://archive.apache.org/dist/thrift/0.9.0/thrift-0.9.0.tar.gz && \
-    tar zxvf thrift-0.9.0.tar.gz && \
-    cd thrift-0.9.0 && \
+    wget http://archive.apache.org/dist/thrift/0.9.3/thrift-0.9.3.tar.gz && \
+    tar zxvf thrift-0.9.3.tar.gz && \
+    cd thrift-0.9.3 && \
     ./configure && \
     make && \
     make install
 
-# install fb303
-RUN cd $thrift_src/thrift-0.9.0/contrib/fb303 && \
+# install Facebook-Scribe(fb303)
+RUN cd $thrift_src/thrift-0.9.3/contrib/fb303 && \
     ./bootstrap.sh && \
     ./configure CPPFLAGS="-DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H" && \
     make && \
     make install
 
-# install scribe
+# install Facebook-Scribe(scribe)
 ENV scribe_src /tmp/scribe
 RUN mkdir -p $scribe_src
 RUN git clone https://github.com/facebook/scribe $scribe_src
@@ -65,10 +65,9 @@ RUN echo "SCRIBED_CONFIG=/etc/scribed/default.conf" >> /etc/sysconfig/scribed
 
 ADD script/scribe.sh /etc/init.d/scribed
 RUN chmod ugo+x /etc/init.d/scribed
-RUN chkconfig scribed on
 
 EXPOSE 80 443 1463
 
-ADD conf/supervisord.conf /etc/supervisord.conf
+ADD config/supervisord.conf /etc/supervisord.conf
 
 CMD ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
