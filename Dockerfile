@@ -48,7 +48,7 @@ ADD script/scribe.sh /etc/init.d/scribed
 RUN chmod ugo+x /etc/init.d/scribed
 
 # install Nginx
-RUN yum install -y epel-release
+RUN rpm -Uvh http://nginx.org/packages/centos/6/x86_64/RPMS/nginx-1.10.2-1.el6.ngx.x86_64.rpm
 RUN yum install -y nginx
 
 # install PHP7 with fpm
