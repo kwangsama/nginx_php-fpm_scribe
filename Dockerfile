@@ -3,8 +3,7 @@ FROM centos:6.7
 MAINTAINER kwangho "kwangho741@gmail.com"
 
 # install prerequisite
-RUN yum clean all
-RUN yum install -y automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar
+RUN yum install -y supervisor automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar
 
 # install thrift
 ENV thrift_src /tmp/thrift
@@ -66,9 +65,8 @@ ADD config/nginx.conf /etc/nginx/nginx.conf
 ADD config/default.conf /etc/nginx/conf.d/default.conf
 ADD config/www.conf /etc/php-fpm.d/www.conf
 
-EXPOSE 80 443 1463
-
 ADD config/supervisord.conf /etc/supervisord.conf
 
-RUN yum install -y supervisor
+EXPOSE 80 443 1463
+
 CMD ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
