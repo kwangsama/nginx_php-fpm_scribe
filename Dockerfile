@@ -3,8 +3,7 @@ FROM centos:6.7
 MAINTAINER kwangho "kwangho741@gmail.com"
 
 # install prerequisite
-RUN yum install -y automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar
-RUN yum install -y python-setuptools
+RUN yum install -y python-setuptools automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar  && yum clean all
 RUN easy_install supervisor
 
 # install thrift
