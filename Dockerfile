@@ -3,7 +3,6 @@ FROM centos:6.7
 MAINTAINER kwangho "kwangho741@gmail.com"
 
 # install prerequisite
-RUN yum groupinstall -y 'development tools'
 RUN yum install -y automake libtool flex bison pkgconfig gcc-c++ boost-devel libevent-devel zliyub-devel python-devel ruby-devel openssl-devel wget make git tar
 RUN yum install python-setuptools
 RUN easy_install supervisor
