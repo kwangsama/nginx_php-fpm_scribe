@@ -55,7 +55,7 @@ RUN yum install -y nginx
 RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 RUN yum install -y php php-devel php-fpm php-opcache php-xml php-pecl-ssh2 php-mcrypt php-mbstring php-pdo php-mysqlnd php-pecl-apcu php-pecl-memcache php-pecl-memcached php-pecl-redis --enablerepo=remi-php70
 
-# web root
+# web root.
 RUN mkdir -p /html
 
 RUN rm -rf /etc/nginx/nginx.conf
